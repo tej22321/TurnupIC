@@ -79,6 +79,12 @@ webDriver.FindElement(By.XPath("//body/div[@id='container']/form[@id='TimeMateri
 
 webDriver.FindElement(By.Id("Price")).SendKeys("25");
 
+String baseDirectory = AppContext.BaseDirectory;
+String relativePath = "../../../images/istqb_logo_nobackground.png";
+string uploadFile = Path.GetFullPath(Path.Combine(baseDirectory, relativePath));
+webDriver.FindElement(By.Id("files")).SendKeys(uploadFile);
+
+
 
 webDriver.FindElement(By.Id("SaveButton")).Click();
 
