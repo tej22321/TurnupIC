@@ -1,4 +1,5 @@
-﻿using OpenQA.Selenium;
+﻿using NUnit.Framework;
+using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
 using SeleniumExtras.WaitHelpers;
 using System;
@@ -10,7 +11,7 @@ using TurnUpPortal.Utilities;
 
 namespace TurnUpPortal.pages
 {
-    public class TimeMaterialPage : Program
+    public class TimeMaterialPage : CommonDriver
     {
 
         public void CreateNewTMRecord(IWebDriver webDriver)
@@ -37,7 +38,7 @@ namespace TurnUpPortal.pages
 
             webDriver.FindElement(By.XPath("//body/div[@id='container']/form[@id='TimeMaterialEditForm']/div[1]/div[1]/div[1]/span[1]/span[1]")).Click();
 
-
+            WebUtilities.waitToBeVisible(webDriver, "//ul[@id='TypeCode_listbox']//li[2]", 5);
 
             webDriver.FindElement(By.XPath("//ul[@id='TypeCode_listbox']//li[2]")).Click();
             
@@ -80,8 +81,14 @@ namespace TurnUpPortal.pages
 
        */
 
+            
+            webDriver.FindElement(By.XPath("//*[@id=\"tmsGrid\"]/div[4]/a[4]/span")).Click();
+
+            WebUtilities.waitToBeVisible(webDriver, "//tbody/tr[last()]/td[last()]/a[1]", 5);
             webDriver.FindElement(By.XPath("//tbody/tr[last()]/td[last()]/a[1]")).Click();
 
+
+            
             String CodeValue = webDriver.FindElement(By.Id("Code")).GetAttribute("value");
 
             webDriver.FindElement(By.Id("Code")).Clear();
@@ -95,6 +102,7 @@ namespace TurnUpPortal.pages
 
 
             webDriver.FindElement(By.XPath("//*[@id=\"tmsGrid\"]/div[4]/a[4]")).Click();
+            
             VerifyRecordUpdated(webDriver, CodeValue);
 
         }
@@ -109,55 +117,40 @@ namespace TurnUpPortal.pages
             compare to make sure successfully deleted 
             */
 
+            webDriver.FindElement(By.XPath("//*[@id=\"tmsGrid\"]/div[4]/a[4]/span")).Click();
+            string CodeValue = webDriver.FindElement(By.XPath("//tbody/tr[last()]/td[1]")).Text;
             webDriver.FindElement(By.XPath("//tbody/tr[last()]/td[last()]/a[2]")).Click();
             webDriver.SwitchTo().Alert().Accept();
-
-            //Thread.Sleep(3000);
-                        
-            WebUtilities.waitToBeVisible(webDriver, "//tbody/tr[last()]/td[1]",10);
-            VerifyRecordDeleted(webDriver);
+                       
+            VerifyRecordDeleted(webDriver, CodeValue);
         }
 
 
         public void VerifyRecordCreated(IWebDriver webDriver)
         {
+            WebUtilities.waitToBeVisible(webDriver, "//tbody/tr[last()]/td[1]", 5);
             string CodeValue = webDriver.FindElement(By.XPath("//tbody/tr[last()]/td[1]")).Text;
-
-            if (CodeValue == "ICMARCH")
-            {
-                Console.WriteLine("successfully inserted");
-            }
-            else
-                Console.WriteLine("not successfully inserted");
+            
+            Assert.That(CodeValue == "ICMARCH", "not successfully inserted");
 
 
         }
 
         public void VerifyRecordUpdated(IWebDriver webDriver, String CodeValue)
         {
-
+            WebUtilities.waitToBeVisible(webDriver, "//tbody/tr[last()]/td[1]", 5);
             string EditCodeValue = webDriver.FindElement(By.XPath("//tbody/tr[last()]/td[1]")).Text;
-
-            if (EditCodeValue == CodeValue + "edit2")
-            {
-                Console.WriteLine("successfully inserted Editted value");
-            }
-            else
-                Console.WriteLine("not successfully inserted the editted value ");
+            Console.WriteLine(CodeValue);
+            Assert.That(EditCodeValue == (CodeValue + "edit2"), "not successfully inserted the editted value");
+            Console.WriteLine(EditCodeValue);
         }
 
-        public void VerifyRecordDeleted(IWebDriver webDriver)
+        public void VerifyRecordDeleted(IWebDriver webDriver, String CodeValue)
         {
+            WebUtilities.waitToBeVisible(webDriver, "//tbody/tr[last()]/td[1]", 10);
             string EditCodeValue = webDriver.FindElement(By.XPath("//tbody/tr[last()]/td[1]")).Text;
-            string CodeValue = webDriver.FindElement(By.XPath("//tbody/tr[last()]/td[1]")).Text;
-
-
-            if (EditCodeValue == CodeValue + "edit2")
-            {
-                Console.WriteLine("Not successfully Deleted");
-            }
-            else
-                Console.WriteLine("successfully Deleted");
+            Console.WriteLine(EditCodeValue);
+            Assert.That(EditCodeValue == "ICMARCHedit2", "Record Successfully Not Deleted");
         }
     }
 }

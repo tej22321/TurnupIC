@@ -1,9 +1,11 @@
-﻿using OpenQA.Selenium;
+﻿using NUnit.Framework;
+using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TurnUpPortal.Utilities;
 
 namespace TurnUpPortal.pages
 {
@@ -24,15 +26,17 @@ namespace TurnUpPortal.pages
 
             string text = webDriver.FindElement(By.XPath("//body/div[3]/div[1]/div[1]/form[1]/ul[1]/li[1]/a[1]")).Text;
 
-            if (text.Equals("Hello hari!"))
-            {
-                Console.WriteLine("user logged in successfully");
-            }
-            else
-            {
+            /* if (text.Equals("Hello hari!"))
+             {
+                 Console.WriteLine("user logged in successfully");
+             }
+             else
+             {
 
-                Console.WriteLine("user not logged in");
-            }
+                 Console.WriteLine("user not logged in");
+             }*/
+
+            Assert.That(text.Equals("Hello hari!"), "User not logged in");
 
         }
     }
